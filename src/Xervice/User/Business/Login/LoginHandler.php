@@ -50,7 +50,12 @@ class LoginHandler implements LoginHandlerInterface
             throw new UserException('Login failed');
         }
 
-        $this->sessionClient->set(self::SESSION_USER_NAME, json_encode($authDataProvider->getUser()->toArray());
+        $this->sessionClient->set(
+            self::SESSION_USER_NAME,
+            json_encode(
+                $authDataProvider->getUser()->toArray()
+            )
+        );
         return $authDataProvider->getUser();
     }
 
