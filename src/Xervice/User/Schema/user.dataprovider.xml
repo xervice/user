@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+
+<DataProviders
+  xmlns="xervice:dataprovider-01"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="xervice:dataprovider-01 http://static.xervice.online/schema/dataprovider.schema.xsd"
+>
+
+    <DataProvider name="User">
+        <DataElement name="UserId" type="int"/>
+        <DataElement name="Email" type="string"/>
+        <DataElement name="UserLogins" singleton="UserLogin" type="UserLogin[]" />
+    </DataProvider>
+
+    <DataProvider name="UserLogin">
+        <DataElement name="UserLoginId" type="int"/>
+        <DataElement name="Type" default="Default" type="string"/>
+        <DataElement name="UserCredentials" singleton="UserCredential" type="UserCredential[]"/>
+    </DataProvider>
+
+    <DataProvider name="UserCredential">
+        <DataElement name="UserCredentialId" type="int"/>
+        <DataElement name="Hash" type="string"/>
+    </DataProvider>
+
+</DataProviders>

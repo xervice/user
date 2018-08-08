@@ -1,0 +1,36 @@
+<database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/propelorm/Propel2/master/resources/xsd/database.xsd"
+          namespace="Orm\Xervice\User\Persistence"
+          name="default"
+>
+
+    <table name="user">
+        <column name="user_id" autoIncrement="true" primaryKey="true" type="INTEGER"/>
+        <column name="email" required="true" type="VARCHAR"/>
+
+        <unique>
+            <unique-column name="email"/>
+        </unique>
+    </table>
+
+    <table name="user_login">
+        <column name="user_login_id" autoIncrement="true" primaryKey="true" type="INTEGER"/>
+        <column name="user_id" type="INTEGER" required="true"/>
+        <column name="type" type="VARCHAR" required="true" default="Default"/>
+
+        <foreign-key foreignTable="user" onDelete="CASCADE">
+            <reference local="user_id" foreign="user_id"/>
+        </foreign-key>
+    </table>
+
+    <table name="user_credential">
+        <column name="user_credential_id" autoIncrement="true" primaryKey="true" type="INTEGER"/>
+        <column name="user_login_id" type="INTEGER" required="true"/>
+        <column name="hash" type="VARCHAR" required="true"/>
+
+        <foreign-key foreignTable="user_login" onDelete="CASCADE">
+            <reference local="user_login_id" foreign="user_login_id"/>
+        </foreign-key>
+    </table>
+
+</database>
