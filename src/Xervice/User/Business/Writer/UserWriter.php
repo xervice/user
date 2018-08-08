@@ -51,10 +51,22 @@ class UserWriter implements UserWriterInterface
         $this->validator->validateUser($userDataProvider);
 
         $user = new User();
-        $user = $this->hydrateEntityFromDataProvider($user, $userDataProvider);
-        $user->save();
+        return $this->persistUserFromDataProvider($userDataProvider, $user);
+    }
 
-        return $userDataProvider->setUserId($user->getUserId());
+    /**
+     * @param \DataProvider\UserDataProvider $userDataProvider
+     *
+     * @return \DataProvider\UserDataProvider
+     * @throws \Propel\Runtime\Exception\PropelException
+     * @throws \Xervice\User\Business\Exception\UserException
+     */
+    public function updateUser(UserDataProvider $userDataProvider): UserDataProvider
+    {
+        $this->validator->validateUser($userDataProvider);
+
+        $user = $this->queryContainer->getUserQuery()->findOneByUserId($userDataProvider->getUserId());
+        return $this->persistUserFromDataProvider($userDataProvider, $user);
     }
 
     /**
@@ -98,9 +110,11 @@ class UserWriter implements UserWriterInterface
     {
         $user->fromArray($userDataProvider->toArray());
 
-        foreach ($userDataProvider->getUserLogins() as $loginDataProvider) {
-            $userLoginEntity = $this->getUserLoginEntity($loginDataProvider);
-            $user->addUserLogin($userLoginEntity);
+        if ($userDataProvider->hasUserLogins()) {
+            foreach ($userDataProvider->getUserLogins() as $loginDataProvider) {
+                $userLoginEntity = $this->getUserLoginEntity($loginDataProvider);
+                $user->addUserLogin($userLoginEntity);
+            }
         }
 
         return $user;
@@ -111,14 +125,16 @@ class UserWriter implements UserWriterInterface
      *
      * @return \Orm\Xervice\User\Persistence\UserLogin
      */
-    private function getUserLoginEntity($loginDataProvider): \Orm\Xervice\User\Persistence\UserLogin
+    private function getUserLoginEntity(UserLoginDataProvider $loginDataProvider): \Orm\Xervice\User\Persistence\UserLogin
     {
         $userLoginEntity = new UserLogin();
         $userLoginEntity->fromArray($loginDataProvider->toArray());
 
-        foreach ($loginDataProvider->getUserCredentials() as $credentialDataProvider) {
-            $userCredentialEntity = $this->getUserCredentialsEntity($credentialDataProvider);
-            $userLoginEntity->addUserCredential($userCredentialEntity);
+        if ($loginDataProvider->hasUserCredentials()) {
+            foreach ($loginDataProvider->getUserCredentials() as $credentialDataProvider) {
+                $userCredentialEntity = $this->getUserCredentialsEntity($credentialDataProvider);
+                $userLoginEntity->addUserCredential($userCredentialEntity);
+            }
         }
         return $userLoginEntity;
     }
@@ -134,4 +150,23 @@ class UserWriter implements UserWriterInterface
         $userCredentialEntity->fromArray($credentialDataProvider->toArray());
         return $userCredentialEntity;
     }
+
+    /**
+     * @param \DataProvider\UserDataProvider $userDataProvider
+     * @param $user
+     *
+     * @return \DataProvider\UserDataProvider
+     * @throws \Propel\Runtime\Exception\PropelException
+     */
+    private function persistUserFromDataProvider(
+        UserDataProvider $userDataProvider,
+        User $user
+    ): \DataProvider\UserDataProvider {
+
+        $user = $this->hydrateEntityFromDataProvider($user, $userDataProvider);
+
+        $user->save();
+
+        return $userDataProvider->setUserId($user->getUserId());
+}
 }

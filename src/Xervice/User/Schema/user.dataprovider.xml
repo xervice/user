@@ -7,19 +7,19 @@
 >
 
     <DataProvider name="User">
-        <DataElement name="UserId" type="int"/>
+        <DataElement name="UserId" allownull="true" type="int"/>
         <DataElement name="Email" type="string"/>
         <DataElement name="UserLogins" singleton="UserLogin" type="UserLogin[]" />
     </DataProvider>
 
     <DataProvider name="UserLogin">
-        <DataElement name="UserLoginId" type="int"/>
+        <DataElement name="UserLoginId" allownull="true" type="int"/>
         <DataElement name="Type" default="Default" type="string"/>
         <DataElement name="UserCredentials" singleton="UserCredential" type="UserCredential[]"/>
     </DataProvider>
 
     <DataProvider name="UserCredential">
-        <DataElement name="UserCredentialId" type="int"/>
+        <DataElement name="UserCredentialId" allownull="true" type="int"/>
         <DataElement name="Hash" type="string"/>
     </DataProvider>
 

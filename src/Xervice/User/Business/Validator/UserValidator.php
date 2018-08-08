@@ -21,12 +21,6 @@ class UserValidator implements UserValidatorInterface
                 'User has no email'
             );
         }
-
-        if (!$userDataProvider->hasUserLogins()) {
-            $this->throwException(
-                'User has no defined logins'
-            );
-        }
     }
 
     /**

@@ -60,9 +60,23 @@ class IntegrationTest extends \Codeception\Test\Unit
 
         $userFromDb = $this->getFacade()->getUserFromEmail('test@test.de');
 
+        $userFromDb->setEmail('test2@test.de');
+
+        $userFromDb->unsetUserLogins();
+
+        $loginThree = new UserLoginDataProvider();
+        $loginThree
+            ->setType('three');
+
+        $userFromDb->addUserLogin($loginThree);
+
+        $this->getFacade()->updateUser($userFromDb);
+        $userFromDb = $this->getFacade()->getUserFromEmail('test2@test.de');
+
+
         $this->assertEquals(
-            $userFromDb->getEmail(),
-            $user->getEmail()
+            'test2@test.de',
+            $userFromDb->getEmail()
         );
 
         $this->assertEquals(
@@ -73,6 +87,11 @@ class IntegrationTest extends \Codeception\Test\Unit
         $this->assertEquals(
             'second',
             $userFromDb->getUserLogins()[1]->getType()
+        );
+
+        $this->assertEquals(
+            'three',
+            $userFromDb->getUserLogins()[2]->getType()
         );
 
         $this->assertEquals(

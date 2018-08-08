@@ -33,4 +33,13 @@ interface UserWriterInterface
         UserDataProvider $userDataProvider,
         UserLoginDataProvider $loginDataProvider
     ): void;
+
+    /**
+     * @param \DataProvider\UserDataProvider $userDataProvider
+     *
+     * @return \DataProvider\UserDataProvider
+     * @throws \Propel\Runtime\Exception\PropelException
+     * @throws \Xervice\User\Business\Exception\UserException
+     */
+    public function updateUser(UserDataProvider $userDataProvider): UserDataProvider;
 }
