@@ -5,10 +5,13 @@ namespace Xervice\User\Business\Writer;
 
 
 use DataProvider\UserDataProvider;
+use DataProvider\UserLoginDataProvider;
 use Orm\Xervice\User\Persistence\User;
 use Orm\Xervice\User\Persistence\UserCredential;
 use Orm\Xervice\User\Persistence\UserLogin;
+use Xervice\User\Business\Exception\UserException;
 use Xervice\User\Business\Validator\UserValidatorInterface;
+use Xervice\User\UserQueryContainerInterface;
 
 class UserWriter implements UserWriterInterface
 {
@@ -18,13 +21,22 @@ class UserWriter implements UserWriterInterface
     private $validator;
 
     /**
+     * @var \Xervice\User\UserQueryContainerInterface
+     */
+    private $queryContainer;
+
+    /**
      * UserWriter constructor.
      *
      * @param \Xervice\User\Business\Validator\UserValidatorInterface $validator
+     * @param \Xervice\User\UserQueryContainerInterface $queryContainer
      */
-    public function __construct(UserValidatorInterface $validator)
-    {
+    public function __construct(
+        UserValidatorInterface $validator,
+        UserQueryContainerInterface $queryContainer
+    ) {
         $this->validator = $validator;
+        $this->queryContainer = $queryContainer;
     }
 
     /**
@@ -34,7 +46,7 @@ class UserWriter implements UserWriterInterface
      * @throws \Propel\Runtime\Exception\PropelException
      * @throws \Xervice\User\Business\Exception\UserException
      */
-    public function createUser(UserDataProvider $userDataProvider)
+    public function createUser(UserDataProvider $userDataProvider): UserDataProvider
     {
         $this->validator->validateUser($userDataProvider);
 
@@ -43,6 +55,25 @@ class UserWriter implements UserWriterInterface
         $user->save();
 
         return $userDataProvider->setUserId($user->getUserId());
+    }
+
+    /**
+     * @param \DataProvider\UserDataProvider $userDataProvider
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
+     * @throws \Xervice\User\Business\Exception\UserException
+     */
+    public function addLoginToUser(
+        UserDataProvider $userDataProvider,
+        UserLoginDataProvider $loginDataProvider
+    ): void {
+        $user = $this->queryContainer->getUserQuery()->findOneByUserId($userDataProvider->getUserId());
+
+        $user->addUserLogin(
+            $this->getUserLoginEntity($loginDataProvider)
+        );
+
+        $user->save();
     }
 
     /**
@@ -68,18 +99,39 @@ class UserWriter implements UserWriterInterface
         $user->fromArray($userDataProvider->toArray());
 
         foreach ($userDataProvider->getUserLogins() as $loginDataProvider) {
-            $userLoginEntity = new UserLogin();
-            $userLoginEntity->fromArray($loginDataProvider->toArray());
-
-            foreach ($loginDataProvider->getUserCredentials() as $credentialDataProvider) {
-                $userCredentialEntity = new UserCredential();
-                $userCredentialEntity->fromArray($credentialDataProvider->toArray());
-                $userLoginEntity->addUserCredential($userCredentialEntity);
-            }
-
+            $userLoginEntity = $this->getUserLoginEntity($loginDataProvider);
             $user->addUserLogin($userLoginEntity);
         }
 
         return $user;
+    }
+
+    /**
+     * @param $loginDataProvider
+     *
+     * @return \Orm\Xervice\User\Persistence\UserLogin
+     */
+    private function getUserLoginEntity($loginDataProvider): \Orm\Xervice\User\Persistence\UserLogin
+    {
+        $userLoginEntity = new UserLogin();
+        $userLoginEntity->fromArray($loginDataProvider->toArray());
+
+        foreach ($loginDataProvider->getUserCredentials() as $credentialDataProvider) {
+            $userCredentialEntity = $this->getUserCredentialsEntity($credentialDataProvider);
+            $userLoginEntity->addUserCredential($userCredentialEntity);
+        }
+        return $userLoginEntity;
+    }
+
+    /**
+     * @param $credentialDataProvider
+     *
+     * @return \Orm\Xervice\User\Persistence\UserCredential
+     */
+    private function getUserCredentialsEntity($credentialDataProvider): \Orm\Xervice\User\Persistence\UserCredential
+    {
+        $userCredentialEntity = new UserCredential();
+        $userCredentialEntity->fromArray($credentialDataProvider->toArray());
+        return $userCredentialEntity;
     }
 }

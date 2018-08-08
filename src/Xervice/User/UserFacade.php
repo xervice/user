@@ -6,6 +6,7 @@ namespace Xervice\User;
 
 
 use DataProvider\UserDataProvider;
+use DataProvider\UserLoginDataProvider;
 use Xervice\Core\Facade\AbstractFacade;
 
 /**
@@ -16,6 +17,19 @@ use Xervice\Core\Facade\AbstractFacade;
 class UserFacade extends AbstractFacade
 {
     /**
+     * @param string $email
+     * @param string $type
+     * @param string $hash
+     *
+     * @return bool
+     * @throws \Xervice\User\Business\Exception\UserException
+     */
+    public function authenticate(string $email, string $type, string $hash): bool
+    {
+        return $this->getFactory()->createAuthenticator()->authenticate($email, $type, $hash);
+    }
+
+    /**
      * @param \DataProvider\UserDataProvider $userDataProvider
      *
      * @return \DataProvider\UserDataProvider
@@ -25,6 +39,21 @@ class UserFacade extends AbstractFacade
     public function createUser(UserDataProvider $userDataProvider): UserDataProvider
     {
         return $this->getFactory()->createUserWriter()->createUser($userDataProvider);
+    }
+
+    /**
+     * @param \DataProvider\UserDataProvider $userDataProvider
+     * @param \DataProvider\UserLoginDataProvider $loginDataProvider
+     *
+     * @return \DataProvider\UserDataProvider
+     * @throws \Propel\Runtime\Exception\PropelException
+     * @throws \Xervice\User\Business\Exception\UserException
+     */
+    public function addUserLogin(
+        UserDataProvider $userDataProvider,
+        UserLoginDataProvider $loginDataProvider
+    ): void {
+        $this->getFactory()->createUserWriter()->addLoginToUser($userDataProvider, $loginDataProvider);
     }
 
     /**
