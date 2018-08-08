@@ -6,8 +6,10 @@ namespace Xervice\User;
 
 
 use Xervice\Core\Factory\AbstractFactory;
-use Xervice\User\Business\Authenticator\UserAuthenticator;
-use Xervice\User\Business\Authenticator\UserAuthenticatorInterface;
+use Xervice\User\Business\Authenticator\AuthProvider;
+use Xervice\User\Business\Authenticator\AuthProviderInterface;
+use Xervice\User\Business\Authenticator\UserCredentialProvider;
+use Xervice\User\Business\Authenticator\UserCredentialProviderInterface;
 use Xervice\User\Business\Validator\UserValidator;
 use Xervice\User\Business\Validator\UserValidatorInterface;
 use Xervice\User\Business\Writer\UserWriter;
@@ -19,11 +21,22 @@ use Xervice\User\Business\Writer\UserWriterInterface;
 class UserFactory extends AbstractFactory
 {
     /**
-     * @return \Xervice\User\Business\Authenticator\UserAuthenticatorInterface
+     * @return \Xervice\User\Business\Authenticator\AuthProviderInterface
      */
-    public function createAuthenticator(): UserAuthenticatorInterface
+    public function createAuthProvider(): AuthProviderInterface
     {
-        return new UserAuthenticator(
+        return new AuthProvider(
+            $this->createCredentialProvider(),
+            $this->getLoginPluginList()
+        );
+    }
+
+    /**
+     * @return \Xervice\User\Business\Authenticator\UserCredentialProviderInterface
+     */
+    public function createCredentialProvider(): UserCredentialProviderInterface
+    {
+        return new UserCredentialProvider(
             $this->getQueryContainer()
         );
     }
@@ -44,7 +57,17 @@ class UserFactory extends AbstractFactory
      */
     public function createUserValidator(): UserValidatorInterface
     {
-        return new UserValidator();
+        return new UserValidator(
+            $this->getQueryContainer()
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function getLoginPluginList(): array
+    {
+        return $this->getDependency(UserDependencyProvider::LOGIN_PLUGINS);
     }
 
     /**

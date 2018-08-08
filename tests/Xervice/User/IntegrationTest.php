@@ -1,6 +1,7 @@
 <?php
 namespace XerviceTest\User;
 
+use DataProvider\UserAuthDataProvider;
 use DataProvider\UserCredentialDataProvider;
 use DataProvider\UserDataProvider;
 use DataProvider\UserLoginDataProvider;
@@ -27,7 +28,18 @@ class IntegrationTest extends \Codeception\Test\Unit
         $this->getDatabaseFacade()->buildModel();
         $this->getDatabaseFacade()->migrate();
         $this->getDatabaseFacade()->initDatabase();
+
+        $this->createTestUser();
     }
+
+    protected function _after()
+    {
+        $userFromDb = $this->getFacade()->getUserFromEmail('test@test.de');
+        if ($userFromDb) {
+            $this->getFacade()->deleteUser($userFromDb);
+        }
+    }
+
 
     /**
      * @group Xervice
@@ -36,46 +48,10 @@ class IntegrationTest extends \Codeception\Test\Unit
 */
     public function testCreateUser()
     {
-        $credential = new UserCredentialDataProvider();
-        $credential
-            ->setHash('myHash');
-
-        $login = new UserLoginDataProvider();
-        $login
-            ->setType('test')
-            ->addUserCredential($credential);
-
-        $user = new UserDataProvider();
-        $user
-            ->setEmail('test@test.de')
-            ->addUserLogin($login);
-
-        $user = $this->getFacade()->createUser($user);
-
-        $loginTwo = new UserLoginDataProvider();
-        $loginTwo
-            ->setType('second');
-
-        $this->getFacade()->addUserLogin($user, $loginTwo);
-
         $userFromDb = $this->getFacade()->getUserFromEmail('test@test.de');
 
-        $userFromDb->setEmail('test2@test.de');
-
-        $userFromDb->unsetUserLogins();
-
-        $loginThree = new UserLoginDataProvider();
-        $loginThree
-            ->setType('three');
-
-        $userFromDb->addUserLogin($loginThree);
-
-        $this->getFacade()->updateUser($userFromDb);
-        $userFromDb = $this->getFacade()->getUserFromEmail('test2@test.de');
-
-
         $this->assertEquals(
-            'test2@test.de',
+            'test@test.de',
             $userFromDb->getEmail()
         );
 
@@ -90,16 +66,88 @@ class IntegrationTest extends \Codeception\Test\Unit
         );
 
         $this->assertEquals(
+            'myHash',
+            $userFromDb->getUserLogins()[0]->getUserCredential()->getHash()
+        );
+    }
+
+    /**
+     * @throws \Core\Locator\Dynamic\ServiceNotParseable
+     * @throws \Propel\Runtime\Exception\PropelException
+     * @throws \Xervice\User\Business\Exception\UserException
+     */
+    public function testUpdateUser()
+    {
+        $userFromDb = $this->getFacade()->getUserFromEmail('test@test.de');
+        $userFromDb->setEmail('test2@test.de');
+        $userFromDb->unsetUserLogins();
+
+        $loginThree = new UserLoginDataProvider();
+        $loginThree
+            ->setType('three')
+            ->setUserCredential((new UserCredentialDataProvider())->setHash('ThirdHash'));
+
+        $userFromDb->addUserLogin($loginThree);
+
+        $this->getFacade()->updateUser($userFromDb);
+
+        $userFromDb = $this->getFacade()->getUserFromEmail('test2@test.de');
+
+        $this->assertEquals(
+            'test2@test.de',
+            $userFromDb->getEmail()
+        );
+
+        $this->assertEquals(
             'three',
             $userFromDb->getUserLogins()[2]->getType()
         );
 
-        $this->assertEquals(
-            $userFromDb->getUserLogins()[0]->getUserCredentials()[0]->getHash(),
-            $user->getUserLogins()[0]->getUserCredentials()[0]->getHash()
-        );
-
         $this->getFacade()->deleteUser($userFromDb);
+    }
+
+    /**
+     * @expectedException \Xervice\User\Business\Exception\UserException
+     * @expectedExceptionMessage Login type Default not found
+     *
+     * @throws \Core\Locator\Dynamic\ServiceNotParseable
+     * @throws \Xervice\User\Business\Exception\UserException
+     */
+    public function testLoginWithoutTypes()
+    {
+        $auth = new UserAuthDataProvider();
+        $auth
+            ->setType('Default')
+            ->setUser((new UserDataProvider())->setEmail('test@test.de'))
+            ->setCredential((new UserCredentialDataProvider())->setHash('hash123'));
+
+        $this->getFacade()->auth($auth);
+    }
+
+    /**
+     * @throws \Core\Locator\Dynamic\ServiceNotParseable
+     * @throws \Propel\Runtime\Exception\PropelException
+     * @throws \Xervice\User\Business\Exception\UserException
+     */
+    private function createTestUser(): void
+    {
+        $login = new UserLoginDataProvider();
+        $login
+            ->setType('test')
+            ->setUserCredential((new UserCredentialDataProvider())->setHash('myHash'));
+
+        $loginTwo = new UserLoginDataProvider();
+        $loginTwo
+            ->setType('second')
+            ->setUserCredential((new UserCredentialDataProvider())->setHash('SecondHash'));
+
+        $user = new UserDataProvider();
+        $user
+            ->setEmail('test@test.de')
+            ->addUserLogin($login)
+            ->addUserLogin($loginTwo);
+
+        $this->getFacade()->createUser($user);
     }
 
     /**

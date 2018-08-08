@@ -23,13 +23,12 @@
         </foreign-key>
     </table>
 
-    <table name="user_credential">
+    <table name="user_credential" allowPkInsert="true">
         <column name="user_credential_id" autoIncrement="true" primaryKey="true" type="INTEGER"/>
-        <column name="user_login_id" type="INTEGER" required="true"/>
         <column name="hash" type="VARCHAR" required="true"/>
 
         <foreign-key foreignTable="user_login" onDelete="CASCADE">
-            <reference local="user_login_id" foreign="user_login_id"/>
+            <reference local="user_credential_id" foreign="user_login_id"/>
         </foreign-key>
     </table>
 

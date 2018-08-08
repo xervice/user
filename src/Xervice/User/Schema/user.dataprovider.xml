@@ -15,12 +15,18 @@
     <DataProvider name="UserLogin">
         <DataElement name="UserLoginId" allownull="true" type="int"/>
         <DataElement name="Type" default="Default" type="string"/>
-        <DataElement name="UserCredentials" singleton="UserCredential" type="UserCredential[]"/>
+        <DataElement name="UserCredential" type="UserCredential"/>
     </DataProvider>
 
     <DataProvider name="UserCredential">
         <DataElement name="UserCredentialId" allownull="true" type="int"/>
         <DataElement name="Hash" type="string"/>
+    </DataProvider>
+
+    <DataProvider name="UserAuth">
+        <DataElement name="Type" type="string"/>
+        <DataElement name="User" type="User"/>
+        <DataElement name="Credential" type="UserCredential"/>
     </DataProvider>
 
 </DataProviders>

@@ -10,6 +10,7 @@ filter:
 build:
   environment:
     php: 7.1
+    postgresql: true
 
     variables:
       APPLICATION_ENV: scrutinizer

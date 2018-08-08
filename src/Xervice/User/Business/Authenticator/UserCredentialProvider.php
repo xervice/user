@@ -4,12 +4,12 @@
 namespace Xervice\User\Business\Authenticator;
 
 
+use DataProvider\UserCredentialDataProvider;
 use DataProvider\UserDataProvider;
-use DataProvider\UserLoginDataProvider;
 use Xervice\User\Business\Exception\UserException;
 use Xervice\User\UserQueryContainerInterface;
 
-class UserAuthenticator implements UserAuthenticatorInterface
+class UserCredentialProvider implements UserCredentialProviderInterface
 {
     /**
      * @var \Xervice\User\UserQueryContainerInterface
@@ -27,61 +27,41 @@ class UserAuthenticator implements UserAuthenticatorInterface
     }
 
     /**
-     * @param string $email
+     * @param \DataProvider\UserDataProvider $userDataProvider
      * @param string $type
-     * @param string $hash
      *
-     * @return bool
+     * @return \DataProvider\UserCredentialDataProvider
      * @throws \Xervice\User\Business\Exception\UserException
      */
-    public function authenticate(string $email, string $type, string $hash): bool
+    public function getCredentialsForType(UserDataProvider $userDataProvider, string $type): UserCredentialDataProvider
     {
-        $user = $this->queryContainer->getUserFromEmail($email);
+        $user = $this->queryContainer->getUserFromEmail($userDataProvider->getEmail());
         if (!$user->hasUserId()) {
             $this->throwException(
                 'User %s not found',
-                $email
+                $userDataProvider->getEmail()
             );
         }
 
-        return $this->authLogins($user, $type, $hash);
+        return $this->authLogins($user, $type);
     }
 
     /**
      * @param \DataProvider\UserDataProvider $userDataProvider
      * @param string $type
-     * @param string $hash
      *
-     * @return bool
+     * @return \DataProvider\UserCredentialDataProvider
      * @throws \Xervice\User\Business\Exception\UserException
      */
-    private function authLogins(UserDataProvider $userDataProvider, string $type, string $hash): bool
+    private function authLogins(UserDataProvider $userDataProvider, string $type): UserCredentialDataProvider
     {
         foreach ($userDataProvider->getUserLogins() as $login) {
             if ($login->getType() === $type) {
-                return $this->authCredentials($login, $hash);
+                return $login->getUserCredentials();
             }
         }
 
         $this->throwException('No valid login for type %s', $type);
-    }
-
-    /**
-     * @param \DataProvider\UserLoginDataProvider $loginDataProvider
-     * @param string $hash
-     *
-     * @return bool
-     * @throws \Xervice\User\Business\Exception\UserException
-     */
-    private function authCredentials(UserLoginDataProvider $loginDataProvider, string $hash): bool
-    {
-        foreach ($loginDataProvider->getUserCredentials() as $credential) {
-            if ($credential->getHash() === $hash) {
-                return true;
-            }
-        }
-
-        $this->throwException('No valid credentials');
     }
 
     /**

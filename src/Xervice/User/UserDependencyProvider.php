@@ -15,6 +15,8 @@ class UserDependencyProvider extends AbstractProvider
 {
     public const QUERY_CONTAINER = 'query.container';
 
+    public const LOGIN_PLUGINS = 'login.plugins';
+
     /**
      * @param \Xervice\Core\Dependency\DependencyProviderInterface $dependencyProvider
      */
@@ -23,5 +25,19 @@ class UserDependencyProvider extends AbstractProvider
         $dependencyProvider[self::QUERY_CONTAINER] = function (DependencyProviderInterface $dependencyProvider) {
             return $dependencyProvider->getLocator()->user()->queryContainer();
         };
+
+        $dependencyProvider[self::LOGIN_PLUGINS] = function () {
+            return $this->getLoginPluginList();
+        };
+    }
+
+    /**
+     * type => {Login::class}
+     *
+     * @return \Xervice\User\Business\Authenticator\Login\LoginInterface[]
+     */
+    protected function getLoginPluginList(): array
+    {
+        return [];
     }
 }
