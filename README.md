@@ -60,12 +60,15 @@ $user
     ->addUserLogin($login);
 
 
-// ------ Login User ------
+// ------ Auth User DataProvider ------
 $auth = new UserAuthDataProvider();
 $auth
     ->setType('Default')
     ->setUser((new UserDataProvider())->setEmail('test@test.de'))
     ->setCredential((new UserCredentialDataProvider())->setHash('myHash'));
+
+
+// ------ Auth User ------
 
 $userFacade->auth($auth); // return true
 
@@ -85,4 +88,11 @@ $auth
     ->setCredential((new UserCredentialDataProvider())->setHash('myHash'));
 
 $userFacade->auth($auth); // throw UserException
+
+// ------ Login User ------
+$userFacade->login($auth); // return UserDataProvider or throw UserException
+
+$userFacade->logout(); // remove user from session
+
+$userFacade->getUser(); // Get active user or null
 ```

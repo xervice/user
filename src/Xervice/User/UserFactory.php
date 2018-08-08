@@ -6,10 +6,13 @@ namespace Xervice\User;
 
 
 use Xervice\Core\Factory\AbstractFactory;
+use Xervice\Session\SessionClient;
 use Xervice\User\Business\Authenticator\AuthProvider;
 use Xervice\User\Business\Authenticator\AuthProviderInterface;
 use Xervice\User\Business\Authenticator\UserCredentialProvider;
 use Xervice\User\Business\Authenticator\UserCredentialProviderInterface;
+use Xervice\User\Business\Login\LoginHandler;
+use Xervice\User\Business\Login\LoginHandlerInterface;
 use Xervice\User\Business\Validator\UserValidator;
 use Xervice\User\Business\Validator\UserValidatorInterface;
 use Xervice\User\Business\Writer\UserWriter;
@@ -20,6 +23,17 @@ use Xervice\User\Business\Writer\UserWriterInterface;
  */
 class UserFactory extends AbstractFactory
 {
+    /**
+     * @return \Xervice\User\Business\Login\LoginHandlerInterface
+     */
+    public function createLoginHandler(): LoginHandlerInterface
+    {
+        return new LoginHandler(
+            $this->getSessionClient(),
+            $this->createAuthProvider()
+        );
+    }
+
     /**
      * @return \Xervice\User\Business\Authenticator\AuthProviderInterface
      */
@@ -76,5 +90,13 @@ class UserFactory extends AbstractFactory
     public function getQueryContainer(): UserQueryContainerInterface
     {
         return $this->getDependency(UserDependencyProvider::QUERY_CONTAINER);
+    }
+
+    /**
+     * @return \Xervice\Session\SessionClient
+     */
+    public function getSessionClient(): SessionClient
+    {
+        return $this->getDependency(UserDependencyProvider::SESSION_CLIENT);
     }
 }

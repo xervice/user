@@ -14,8 +14,8 @@ use Xervice\Core\Dependency\Provider\AbstractProvider;
 class UserDependencyProvider extends AbstractProvider
 {
     public const QUERY_CONTAINER = 'query.container';
-
     public const LOGIN_PLUGINS = 'login.plugins';
+    public const SESSION_CLIENT = 'session.client';
 
     /**
      * @param \Xervice\Core\Dependency\DependencyProviderInterface $dependencyProvider
@@ -28,6 +28,10 @@ class UserDependencyProvider extends AbstractProvider
 
         $dependencyProvider[self::LOGIN_PLUGINS] = function () {
             return $this->getLoginPluginList();
+        };
+
+        $dependencyProvider[self::SESSION_CLIENT] = function (DependencyProviderInterface $dependencyProvider) {
+            return $dependencyProvider->getLocator()->session()->client();
         };
     }
 

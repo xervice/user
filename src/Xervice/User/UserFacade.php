@@ -6,9 +6,7 @@ namespace Xervice\User;
 
 
 use DataProvider\UserAuthDataProvider;
-use DataProvider\UserCredentialDataProvider;
 use DataProvider\UserDataProvider;
-use DataProvider\UserLoginDataProvider;
 use Xervice\Core\Facade\AbstractFacade;
 
 /**
@@ -18,6 +16,30 @@ use Xervice\Core\Facade\AbstractFacade;
  */
 class UserFacade extends AbstractFacade
 {
+    /**
+     * @param \DataProvider\UserAuthDataProvider $authDataProvider
+     *
+     * @return \DataProvider\UserDataProvider
+     * @throws \Xervice\User\Business\Exception\UserException
+     */
+    public function login(UserAuthDataProvider $authDataProvider)
+    {
+        return $this->getFactory()->createLoginHandler()->login($authDataProvider);
+    }
+
+    public function logout(): void
+    {
+        $this->getFactory()->createLoginHandler()->logout();
+    }
+
+    /**
+     * @return \DataProvider\UserDataProvider|null
+     */
+    public function getLoggedUser(): ?UserDataProvider
+    {
+        return $this->getFactory()->createLoginHandler()->getUser();
+    }
+
     /**
      * @param \DataProvider\UserAuthDataProvider $authDataProvider
      *
