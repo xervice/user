@@ -133,7 +133,7 @@ class IntegrationTest extends \Codeception\Test\Unit
      * @throws \Core\Locator\Dynamic\ServiceNotParseable
      * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function testgetUserLogin()
+    public function testGetUserLogin()
     {
         $userFromDb = $this->getFacade()->getUserFromEmail('test@test.de');
 
@@ -141,6 +141,22 @@ class IntegrationTest extends \Codeception\Test\Unit
 
         $this->assertEquals(
             'second',
+            $login->getType()
+        );
+    }
+
+    /**
+     * @throws \Core\Locator\Dynamic\ServiceNotParseable
+     * @throws \Propel\Runtime\Exception\PropelException
+     */
+    public function testGetUserLoginNotExist()
+    {
+        $userFromDb = $this->getFacade()->getUserFromEmail('test@test.de');
+
+        $login = $this->getFacade()->getLoginFromUserByType($userFromDb->getUserId(), 'ola');
+
+        $this->assertEquals(
+            'Default',
             $login->getType()
         );
     }

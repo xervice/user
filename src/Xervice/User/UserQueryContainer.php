@@ -133,7 +133,7 @@ class UserQueryContainer implements XerviceInterface, UserQueryContainerInterfac
      *
      * @return \DataProvider\UserCredentialDataProvider
      */
-    public function getCredentialDataProviderFromEntity(UserCredential $credential): UserCredentialDataProvider
+    public function getCredentialDataProviderFromEntity(UserCredential $credential = null): UserCredentialDataProvider
     {
         $credentialDataProvider = new UserCredentialDataProvider();
         if ($credential) {
@@ -155,7 +155,7 @@ class UserQueryContainer implements XerviceInterface, UserQueryContainerInterfac
      *
      * @return \DataProvider\UserLoginDataProvider
      */
-    public function getLoginDataProviderFromEntity(UserLogin $login): UserLoginDataProvider
+    public function getLoginDataProviderFromEntity(UserLogin $login = null): UserLoginDataProvider
     {
         $loginDataProvider = new UserLoginDataProvider();
         if ($login) {
