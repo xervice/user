@@ -133,6 +133,22 @@ class IntegrationTest extends \Codeception\Test\Unit
      * @throws \Core\Locator\Dynamic\ServiceNotParseable
      * @throws \Propel\Runtime\Exception\PropelException
      */
+    public function testgetUserLogin()
+    {
+        $userFromDb = $this->getFacade()->getUserFromEmail('test@test.de');
+
+        $login = $this->getFacade()->getLoginFromUserByType($userFromDb->getUserId(), 'second');
+
+        $this->assertEquals(
+            'second',
+            $login->getType()
+        );
+    }
+
+    /**
+     * @throws \Core\Locator\Dynamic\ServiceNotParseable
+     * @throws \Propel\Runtime\Exception\PropelException
+     */
     public function testUpdateCredentials()
     {
         $userFromDb = $this->getFacade()->getUserFromEmail('test@test.de');

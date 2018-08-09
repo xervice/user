@@ -123,6 +123,7 @@ class UserQueryContainer implements XerviceInterface, UserQueryContainerInterfac
     {
         return $this->getLoginQuery()
                     ->filterByUserId($userId)
+                    ->filterByType($type)
                     ->joinWith('UserLogin.UserCredential');
     }
 
