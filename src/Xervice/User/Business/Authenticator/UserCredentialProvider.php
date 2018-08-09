@@ -57,7 +57,7 @@ class UserCredentialProvider implements UserCredentialProviderInterface
     {
         foreach ($userDataProvider->getUserLogins() as $login) {
             if ($login->getType() === $type) {
-                return $login->getUserCredentials();
+                return $login->getUserCredential();
             }
         }
 
