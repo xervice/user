@@ -118,6 +118,17 @@ class UserFacade extends AbstractFacade
     }
 
     /**
+     * @param int $userId
+     * @param string $type
+     *
+     * @return \DataProvider\UserLoginDataProvider
+     */
+    public function getLoginFromUserByType(int $userId, string $type): UserLoginDataProvider
+    {
+        return $this->getFactory()->getQueryContainer()->getUserLoginFromType($userId, $type);
+    }
+
+    /**
      * @param \DataProvider\UserDataProvider $userDataProvider
      *
      * @throws \Propel\Runtime\Exception\PropelException
