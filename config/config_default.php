@@ -17,6 +17,10 @@ if (class_exists(DatabaseConfig::class)) {
     $config[DatabaseConfig::PROPEL_CONF_DBNAME] = 'scrutinizer';
     $config[DatabaseConfig::PROPEL_CONF_USER] = 'scrutinizer';
     $config[DatabaseConfig::PROPEL_CONF_PASSWORD] = 'scrutinizer';
+    $config[DatabaseConfig::SCHEMA_PATHS] = [
+        dirname(__DIR__) . '/src'
+    ];
+    $config[DatabaseConfig::SCHEMA_TARGET] = dirname(__DIR__) . '/src/Orm/Schema';
 
     $dsn = sprintf(
         '%s:host=%s;port=%d;dbname=%s;user=%s;password=%s',
@@ -57,7 +61,7 @@ if (class_exists(DatabaseConfig::class)) {
             ],
             'paths'     => [
                 'projectDir'   => dirname(__DIR__),
-                'schemaDir'    => dirname(__DIR__) . '/src',
+                'schemaDir'    => $config[DatabaseConfig::SCHEMA_TARGET],
                 'outputDir'    => dirname(__DIR__) . '/src/Orm/Output',
                 'phpDir'       => dirname(__DIR__) . '/src/',
                 'migrationDir' => dirname(__DIR__) . '/src/Orm/Migrations',

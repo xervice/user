@@ -86,6 +86,7 @@ class UserWriter implements UserWriterInterface
      * @param \DataProvider\UserDataProvider $userDataProvider
      *
      * @return \Orm\Xervice\User\Persistence\User
+     * @throws \Propel\Runtime\Exception\PropelException
      */
     private function hydrateEntityFromDataProvider(User $user, UserDataProvider $userDataProvider): User
     {
@@ -93,44 +94,12 @@ class UserWriter implements UserWriterInterface
 
         if ($userDataProvider->hasUserLogins()) {
             foreach ($userDataProvider->getUserLogins() as $loginDataProvider) {
-                $userLoginEntity = $this->getUserLoginEntity($loginDataProvider);
+                $userLoginEntity = $this->queryContainer->getLoginEntityFromDataProvider($loginDataProvider);
                 $user->addUserLogin($userLoginEntity);
             }
         }
 
         return $user;
-    }
-
-    /**
-     * @param \DataProvider\UserLoginDataProvider $loginDataProvider
-     *
-     * @return \Orm\Xervice\User\Persistence\UserLogin
-     * @throws \Propel\Runtime\Exception\PropelException
-     */
-    private function getUserLoginEntity(UserLoginDataProvider $loginDataProvider): UserLogin
-    {
-        $userLoginEntity = new UserLogin();
-        $userLoginEntity->fromArray($loginDataProvider->toArray());
-
-        if ($loginDataProvider->hasUserCredential()) {
-            $userLoginEntity->setUserCredential(
-                $this->getUserCredentialsEntity($loginDataProvider->getUserCredential())
-            );
-        }
-
-        return $userLoginEntity;
-    }
-
-    /**
-     * @param $credentialDataProvider
-     *
-     * @return \Orm\Xervice\User\Persistence\UserCredential
-     */
-    private function getUserCredentialsEntity($credentialDataProvider): UserCredential
-    {
-        $userCredentialEntity = new UserCredential();
-        $userCredentialEntity->fromArray($credentialDataProvider->toArray());
-        return $userCredentialEntity;
     }
 
     /**

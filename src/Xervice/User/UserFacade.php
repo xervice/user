@@ -6,7 +6,9 @@ namespace Xervice\User;
 
 
 use DataProvider\UserAuthDataProvider;
+use DataProvider\UserCredentialDataProvider;
 use DataProvider\UserDataProvider;
+use DataProvider\UserLoginDataProvider;
 use Xervice\Core\Facade\AbstractFacade;
 
 /**
@@ -73,6 +75,26 @@ class UserFacade extends AbstractFacade
     public function updateUser(UserDataProvider $userDataProvider): UserDataProvider
     {
         return $this->getFactory()->createUserWriter()->updateUser($userDataProvider);
+    }
+
+    /**
+     * @param \DataProvider\UserLoginDataProvider $loginDataProvider
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
+     */
+    public function updateLogin(UserLoginDataProvider $loginDataProvider): void
+    {
+        $this->getFactory()->createLoginWriter()->updateLogin($loginDataProvider);
+    }
+
+    /**
+     * @param \DataProvider\UserCredentialDataProvider $credentialDataProvider
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
+     */
+    public function updateCredential(UserCredentialDataProvider $credentialDataProvider): void
+    {
+        $this->getFactory()->createCredentialWriter()->updateCredential($credentialDataProvider);
     }
 
     /**

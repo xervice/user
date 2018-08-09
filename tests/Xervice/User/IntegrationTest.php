@@ -107,6 +107,52 @@ class IntegrationTest extends \Codeception\Test\Unit
     }
 
     /**
+     * @throws \Core\Locator\Dynamic\ServiceNotParseable
+     * @throws \Propel\Runtime\Exception\PropelException
+     */
+    public function testUpdateLogin()
+    {
+        $userFromDb = $this->getFacade()->getUserFromEmail('test@test.de');
+
+        $login = $userFromDb->getUserLogins()[0];
+        $login->setType('NEWTYPE');
+
+        $this->getFacade()->updateLogin($login);
+
+        $userTest = $this->getFacade()->getUserFromEmail('test@test.de');
+
+        $this->assertEquals(
+            'NEWTYPE',
+            $userTest->getUserLogins()[0]->getType()
+        );
+
+        $this->getFacade()->deleteUser($userTest);
+    }
+
+    /**
+     * @throws \Core\Locator\Dynamic\ServiceNotParseable
+     * @throws \Propel\Runtime\Exception\PropelException
+     */
+    public function testUpdateCredentials()
+    {
+        $userFromDb = $this->getFacade()->getUserFromEmail('test@test.de');
+
+        $credential = $userFromDb->getUserLogins()[0]->getUserCredential();
+        $credential->setHash('NEWHASH');
+
+        $this->getFacade()->updateCredential($credential);
+
+        $userTest = $this->getFacade()->getUserFromEmail('test@test.de');
+
+        $this->assertEquals(
+            'NEWHASH',
+            $userTest->getUserLogins()[0]->getUserCredential()->getHash()
+        );
+
+        $this->getFacade()->deleteUser($userTest);
+    }
+
+    /**
      * @expectedException \Xervice\User\Business\Exception\UserException
      * @expectedExceptionMessage Login type Default not found
      *

@@ -15,6 +15,10 @@ use Xervice\User\Business\Login\LoginHandler;
 use Xervice\User\Business\Login\LoginHandlerInterface;
 use Xervice\User\Business\Validator\UserValidator;
 use Xervice\User\Business\Validator\UserValidatorInterface;
+use Xervice\User\Business\Writer\CredentialWriter;
+use Xervice\User\Business\Writer\CredentialWriterInterface;
+use Xervice\User\Business\Writer\LoginWriter;
+use Xervice\User\Business\Writer\LoginWriterInterface;
 use Xervice\User\Business\Writer\UserWriter;
 use Xervice\User\Business\Writer\UserWriterInterface;
 
@@ -23,6 +27,26 @@ use Xervice\User\Business\Writer\UserWriterInterface;
  */
 class UserFactory extends AbstractFactory
 {
+    /**
+     * @return \Xervice\User\Business\Writer\CredentialWriterInterface
+     */
+    public function createCredentialWriter(): CredentialWriterInterface
+    {
+        return new CredentialWriter(
+            $this->getQueryContainer()
+        );
+    }
+
+    /**
+     * @return \Xervice\User\Business\Writer\LoginWriterInterface
+     */
+    public function createLoginWriter(): LoginWriterInterface
+    {
+        return new LoginWriter(
+            $this->getQueryContainer()
+        );
+    }
+
     /**
      * @return \Xervice\User\Business\Login\LoginHandlerInterface
      */
