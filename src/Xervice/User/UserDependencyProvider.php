@@ -5,40 +5,32 @@ declare(strict_types=1);
 namespace Xervice\User;
 
 
-use Xervice\Core\Dependency\DependencyProviderInterface;
-use Xervice\Core\Dependency\Provider\AbstractProvider;
 
-/**
- * @method \Xervice\Core\Locator\Locator getLocator()
- */
-class UserDependencyProvider extends AbstractProvider
+use Xervice\Core\Business\Model\Dependency\DependencyContainerInterface;
+use Xervice\Core\Business\Model\Dependency\Provider\AbstractDependencyProvider;
+
+class UserDependencyProvider extends AbstractDependencyProvider
 {
-    public const QUERY_CONTAINER = 'query.container';
     public const LOGIN_PLUGINS = 'login.plugins';
-    public const SESSION_CLIENT = 'session.client';
+    public const SESSION_FACADE = 'session.client';
 
-    /**
-     * @param \Xervice\Core\Dependency\DependencyProviderInterface $dependencyProvider
-     */
-    public function handleDependencies(DependencyProviderInterface $dependencyProvider): void
+    public function handleDependencies(DependencyContainerInterface $container): DependencyContainerInterface
     {
-        $dependencyProvider[self::QUERY_CONTAINER] = function (DependencyProviderInterface $dependencyProvider) {
-            return $dependencyProvider->getLocator()->user()->queryContainer();
-        };
-
-        $dependencyProvider[self::LOGIN_PLUGINS] = function () {
+        $container[self::LOGIN_PLUGINS] = function () {
             return $this->getLoginPluginList();
         };
 
-        $dependencyProvider[self::SESSION_CLIENT] = function (DependencyProviderInterface $dependencyProvider) {
-            return $dependencyProvider->getLocator()->session()->client();
+        $container[self::SESSION_FACADE] = function (DependencyContainerInterface $container) {
+            return $container->getLocator()->session()->facade();
         };
+
+        return $container;
     }
 
     /**
      * type => {Login::class}
      *
-     * @return \Xervice\User\Business\Authenticator\Login\LoginInterface[]
+     * @return \Xervice\User\Business\Dependency\Authenticator\Login\LoginInterface[]
      */
     protected function getLoginPluginList(): array
     {

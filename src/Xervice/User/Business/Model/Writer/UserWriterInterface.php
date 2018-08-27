@@ -1,6 +1,6 @@
 <?php
 
-namespace Xervice\User\Business\Writer;
+namespace Xervice\User\Business\Model\Writer;
 
 use DataProvider\UserDataProvider;
 use DataProvider\UserLoginDataProvider;
@@ -12,7 +12,6 @@ interface UserWriterInterface
      *
      * @return \DataProvider\UserDataProvider
      * @throws \Propel\Runtime\Exception\PropelException
-     * @throws \Xervice\User\Business\Exception\UserException
      */
     public function createUser(UserDataProvider $userDataProvider);
 
@@ -28,7 +27,6 @@ interface UserWriterInterface
      *
      * @return \DataProvider\UserDataProvider
      * @throws \Propel\Runtime\Exception\PropelException
-     * @throws \Xervice\User\Business\Exception\UserException
      */
     public function updateUser(UserDataProvider $userDataProvider): UserDataProvider;
 }

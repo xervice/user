@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Xervice\User\Business\Authenticator;
+namespace Xervice\User\Business\Model\Authenticator;
 
 
 use DataProvider\UserAuthDataProvider;
@@ -10,20 +10,20 @@ use Xervice\User\Business\Exception\UserException;
 class AuthProvider implements AuthProviderInterface
 {
     /**
-     * @var \Xervice\User\Business\Authenticator\UserCredentialProviderInterface
+     * @var \Xervice\User\Business\Model\Authenticator\UserCredentialProviderInterface
      */
     private $credentialProvider;
 
     /**
-     * @var \Xervice\User\Business\Authenticator\Login\LoginInterface[]
+     * @var \Xervice\User\Business\Dependency\Authenticator\Login\LoginInterface[]
      */
     private $loginCollection;
 
     /**
      * AuthProvider constructor.
      *
-     * @param \Xervice\User\Business\Authenticator\UserCredentialProviderInterface $credentialProvider
-     * @param \Xervice\User\Business\Authenticator\Login\LoginInterface[] $loginCollection
+     * @param \Xervice\User\Business\Model\Authenticator\UserCredentialProviderInterface $credentialProvider
+     * @param \Xervice\User\Business\Dependency\Authenticator\Login\LoginInterface[] $loginCollection
      */
     public function __construct(
         UserCredentialProviderInterface $credentialProvider,
@@ -34,7 +34,6 @@ class AuthProvider implements AuthProviderInterface
     }
 
     /**
-     * @param string $type
      * @param \DataProvider\UserAuthDataProvider $authDataProvider
      *
      * @return bool

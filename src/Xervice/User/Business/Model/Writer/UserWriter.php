@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Xervice\User\Business\Writer;
+namespace Xervice\User\Business\Model\Writer;
 
 
 use DataProvider\UserDataProvider;
@@ -9,34 +9,35 @@ use DataProvider\UserLoginDataProvider;
 use Orm\Xervice\User\Persistence\User;
 use Orm\Xervice\User\Persistence\UserCredential;
 use Orm\Xervice\User\Persistence\UserLogin;
-use Xervice\User\Business\Exception\UserException;
-use Xervice\User\Business\Validator\UserValidatorInterface;
+use Xervice\User\Business\Model\Exception\UserException;
+use Xervice\User\Business\Model\Validator\UserValidatorInterface;
+use Xervice\User\Persistence\UserDataReader;
 use Xervice\User\UserQueryContainerInterface;
 
 class UserWriter implements UserWriterInterface
 {
     /**
-     * @var \Xervice\User\Business\Validator\UserValidatorInterface
+     * @var \Xervice\User\Business\Model\Validator\UserValidatorInterface
      */
     private $validator;
 
     /**
-     * @var \Xervice\User\UserQueryContainerInterface
+     * @var \Xervice\User\Persistence\UserDataReader
      */
-    private $queryContainer;
+    private $userDataReader;
 
     /**
      * UserWriter constructor.
      *
-     * @param \Xervice\User\Business\Validator\UserValidatorInterface $validator
-     * @param \Xervice\User\UserQueryContainerInterface $queryContainer
+     * @param \Xervice\User\Business\Model\Validator\UserValidatorInterface $validator
+     * @param \Xervice\User\Persistence\UserDataReader $userDataReader
      */
     public function __construct(
         UserValidatorInterface $validator,
-        UserQueryContainerInterface $queryContainer
+        UserDataReader $userDataReader
     ) {
         $this->validator = $validator;
-        $this->queryContainer = $queryContainer;
+        $this->userDataReader = $userDataReader;
     }
 
     /**
@@ -44,7 +45,7 @@ class UserWriter implements UserWriterInterface
      *
      * @return \DataProvider\UserDataProvider
      * @throws \Propel\Runtime\Exception\PropelException
-     * @throws \Xervice\User\Business\Exception\UserException
+     * @throws \Xervice\User\Business\Model\Exception\UserException
      */
     public function createUser(UserDataProvider $userDataProvider): UserDataProvider
     {
@@ -59,13 +60,13 @@ class UserWriter implements UserWriterInterface
      *
      * @return \DataProvider\UserDataProvider
      * @throws \Propel\Runtime\Exception\PropelException
-     * @throws \Xervice\User\Business\Exception\UserException
+     * @throws \Xervice\User\Business\Model\Exception\UserException
      */
     public function updateUser(UserDataProvider $userDataProvider): UserDataProvider
     {
         $this->validator->validateUser($userDataProvider);
 
-        $user = $this->queryContainer->getUserQuery()->findOneByUserId($userDataProvider->getUserId());
+        $user = $this->userDataReader->getUserQuery()->findOneByUserId($userDataProvider->getUserId());
         return $this->persistUserFromDataProvider($userDataProvider, $user);
     }
 
@@ -94,7 +95,7 @@ class UserWriter implements UserWriterInterface
 
         if ($userDataProvider->hasUserLogins()) {
             foreach ($userDataProvider->getUserLogins() as $loginDataProvider) {
-                $userLoginEntity = $this->queryContainer->getLoginEntityFromDataProvider($loginDataProvider);
+                $userLoginEntity = $this->userDataReader->getLoginEntityFromDataProvider($loginDataProvider);
                 $user->addUserLogin($userLoginEntity);
             }
         }

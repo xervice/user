@@ -1,28 +1,28 @@
 <?php
 
 
-namespace Xervice\User\Business\Validator;
+namespace Xervice\User\Business\Model\Validator;
 
 
 use DataProvider\UserDataProvider;
 use Xervice\User\Business\Exception\UserException;
-use Xervice\User\UserQueryContainerInterface;
+use Xervice\User\Persistence\UserDataReader;
 
 class UserValidator implements UserValidatorInterface
 {
     /**
-     * @var \Xervice\User\UserQueryContainerInterface
+     * @var \Xervice\User\Persistence\UserDataReader
      */
-    private $queryContainer;
+    private $userReader;
 
     /**
      * UserValidator constructor.
      *
-     * @param \Xervice\User\UserQueryContainerInterface $queryContainer
+     * @param \Xervice\User\Persistence\UserDataReader $userReader
      */
-    public function __construct(UserQueryContainerInterface $queryContainer)
+    public function __construct(UserDataReader $userReader)
     {
-        $this->queryContainer = $queryContainer;
+        $this->userReader = $userReader;
     }
 
     /**
@@ -36,7 +36,7 @@ class UserValidator implements UserValidatorInterface
         $this->validateLoginHasCredential($userDataProvider);
         $this->validateWithDb(
             $userDataProvider,
-            $this->queryContainer->getUserFromEmail($userDataProvider->getEmail())
+            $this->userReader->getUserFromEmail($userDataProvider->getEmail())
         );
     }
 
@@ -108,6 +108,8 @@ class UserValidator implements UserValidatorInterface
     }
 
     /**
+     * @param \DataProvider\UserDataProvider $userDataProvider
+     *
      * @throws \Xervice\User\Business\Exception\UserException
      */
     private function userHasEmail(UserDataProvider $userDataProvider): void

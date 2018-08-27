@@ -4,7 +4,9 @@
 namespace Xervice\User\Business\Exception;
 
 
-class UserException extends \Exception
+use Xervice\Core\Business\Exception\XerviceException;
+
+class UserException extends XerviceException
 {
 
 }

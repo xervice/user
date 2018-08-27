@@ -5,22 +5,17 @@ use DataProvider\UserAuthDataProvider;
 use DataProvider\UserCredentialDataProvider;
 use DataProvider\UserDataProvider;
 use DataProvider\UserLoginDataProvider;
-use Orm\Xervice\User\Persistence\User;
-use Orm\Xervice\User\Persistence\UserCredential;
-use Orm\Xervice\User\Persistence\UserLogin;
-use Orm\Xervice\User\Persistence\UserQuery;
-use Propel\Runtime\Map\TableMap;
-use Xervice\Core\Locator\Dynamic\DynamicLocator;
-use Xervice\Core\Locator\Locator;
-use Xervice\Database\DatabaseFacade;
+use Xervice\Core\Business\Model\Locator\Dynamic\Business\DynamicBusinessLocator;
+use Xervice\Core\Business\Model\Locator\Locator;
+use Xervice\Database\Business\DatabaseFacade;
 
 /**
- * @method \Xervice\User\UserFacade getFacade()
- * @method \Xervice\User\UserFactory getFactory()
+ * @method \Xervice\User\Business\UserFacade getFacade()
+ * @method \Xervice\User\Business\UserBusinessFactory getFactory()
  */
 class IntegrationTest extends \Codeception\Test\Unit
 {
-    use DynamicLocator;
+    use DynamicBusinessLocator;
 
     protected function _before()
     {
@@ -45,7 +40,7 @@ class IntegrationTest extends \Codeception\Test\Unit
      * @group Xervice
      * @group User
      * @group Integration
-*/
+     */
     public function testCreateUser()
     {
         $userFromDb = $this->getFacade()->getUserFromEmail('test@test.de');
@@ -71,11 +66,6 @@ class IntegrationTest extends \Codeception\Test\Unit
         );
     }
 
-    /**
-     * @throws \Core\Locator\Dynamic\ServiceNotParseable
-     * @throws \Propel\Runtime\Exception\PropelException
-     * @throws \Xervice\User\Business\Exception\UserException
-     */
     public function testUpdateUser()
     {
         $userFromDb = $this->getFacade()->getUserFromEmail('test@test.de');
@@ -106,10 +96,6 @@ class IntegrationTest extends \Codeception\Test\Unit
         $this->getFacade()->deleteUser($userFromDb);
     }
 
-    /**
-     * @throws \Core\Locator\Dynamic\ServiceNotParseable
-     * @throws \Propel\Runtime\Exception\PropelException
-     */
     public function testUpdateLogin()
     {
         $userFromDb = $this->getFacade()->getUserFromEmail('test@test.de');
@@ -129,10 +115,6 @@ class IntegrationTest extends \Codeception\Test\Unit
         $this->getFacade()->deleteUser($userTest);
     }
 
-    /**
-     * @throws \Core\Locator\Dynamic\ServiceNotParseable
-     * @throws \Propel\Runtime\Exception\PropelException
-     */
     public function testGetUserLogin()
     {
         $userFromDb = $this->getFacade()->getUserFromEmail('test@test.de');
@@ -145,10 +127,6 @@ class IntegrationTest extends \Codeception\Test\Unit
         );
     }
 
-    /**
-     * @throws \Core\Locator\Dynamic\ServiceNotParseable
-     * @throws \Propel\Runtime\Exception\PropelException
-     */
     public function testGetUserLoginNotExist()
     {
         $userFromDb = $this->getFacade()->getUserFromEmail('test@test.de');
@@ -161,10 +139,6 @@ class IntegrationTest extends \Codeception\Test\Unit
         );
     }
 
-    /**
-     * @throws \Core\Locator\Dynamic\ServiceNotParseable
-     * @throws \Propel\Runtime\Exception\PropelException
-     */
     public function testUpdateCredentials()
     {
         $userFromDb = $this->getFacade()->getUserFromEmail('test@test.de');
@@ -187,9 +161,6 @@ class IntegrationTest extends \Codeception\Test\Unit
     /**
      * @expectedException \Xervice\User\Business\Exception\UserException
      * @expectedExceptionMessage Login type Default not found
-     *
-     * @throws \Core\Locator\Dynamic\ServiceNotParseable
-     * @throws \Xervice\User\Business\Exception\UserException
      */
     public function testLoginWithoutTypes()
     {
@@ -202,11 +173,6 @@ class IntegrationTest extends \Codeception\Test\Unit
         $this->getFacade()->auth($auth);
     }
 
-    /**
-     * @throws \Core\Locator\Dynamic\ServiceNotParseable
-     * @throws \Propel\Runtime\Exception\PropelException
-     * @throws \Xervice\User\Business\Exception\UserException
-     */
     private function createTestUser(): void
     {
         $login = new UserLoginDataProvider();
@@ -229,7 +195,7 @@ class IntegrationTest extends \Codeception\Test\Unit
     }
 
     /**
-     * @return \Xervice\Database\DatabaseFacade
+     * @return \Xervice\Database\Business\DatabaseFacade
      */
     private function getDatabaseFacade(): DatabaseFacade
     {

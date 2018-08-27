@@ -1,6 +1,6 @@
 <?php
 
-namespace Xervice\User\Business\Authenticator;
+namespace Xervice\User\Business\Model\Authenticator;
 
 use DataProvider\UserCredentialDataProvider;
 use DataProvider\UserDataProvider;
@@ -12,7 +12,6 @@ interface UserCredentialProviderInterface
      * @param string $type
      *
      * @return \DataProvider\UserCredentialDataProvider
-     * @throws \Xervice\User\Business\Exception\UserException
      */
     public function getCredentialsForType(UserDataProvider $userDataProvider, string $type): UserCredentialDataProvider;
 }

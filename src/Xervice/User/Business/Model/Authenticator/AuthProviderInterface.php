@@ -1,6 +1,6 @@
 <?php
 
-namespace Xervice\User\Business\Authenticator;
+namespace Xervice\User\Business\Model\Authenticator;
 
 use DataProvider\UserAuthDataProvider;
 

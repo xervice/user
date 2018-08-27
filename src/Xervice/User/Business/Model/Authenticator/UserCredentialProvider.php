@@ -1,29 +1,29 @@
 <?php
 
 
-namespace Xervice\User\Business\Authenticator;
+namespace Xervice\User\Business\Model\Authenticator;
 
 
 use DataProvider\UserCredentialDataProvider;
 use DataProvider\UserDataProvider;
 use Xervice\User\Business\Exception\UserException;
-use Xervice\User\UserQueryContainerInterface;
+use Xervice\User\Persistence\UserDataReader;
 
 class UserCredentialProvider implements UserCredentialProviderInterface
 {
     /**
-     * @var \Xervice\User\UserQueryContainerInterface
+     * @var \Xervice\User\Persistence\UserDataReader
      */
-    private $queryContainer;
+    private $userReader;
 
     /**
      * UserAuthenticator constructor.
      *
-     * @param \Xervice\User\UserQueryContainerInterface $queryContainer
+     * @param \Xervice\User\Persistence\UserDataReader $userReader
      */
-    public function __construct(UserQueryContainerInterface $queryContainer)
+    public function __construct(UserDataReader $userReader)
     {
-        $this->queryContainer = $queryContainer;
+        $this->userReader = $userReader;
     }
 
     /**
@@ -35,7 +35,7 @@ class UserCredentialProvider implements UserCredentialProviderInterface
      */
     public function getCredentialsForType(UserDataProvider $userDataProvider, string $type): UserCredentialDataProvider
     {
-        $user = $this->queryContainer->getUserFromEmail($userDataProvider->getEmail());
+        $user = $this->userReader->getUserFromEmail($userDataProvider->getEmail());
         if (!$user->hasUserId()) {
             $this->throwException(
                 'User %s not found',

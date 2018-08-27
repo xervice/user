@@ -1,8 +1,7 @@
 <?php
+declare(strict_types=1);
 
-
-namespace Xervice\User;
-
+namespace Xervice\User\Persistence;
 
 use DataProvider\UserCredentialDataProvider;
 use DataProvider\UserDataProvider;
@@ -14,9 +13,9 @@ use Orm\Xervice\User\Persistence\UserLogin;
 use Orm\Xervice\User\Persistence\UserLoginQuery;
 use Orm\Xervice\User\Persistence\UserQuery;
 use Propel\Runtime\Map\TableMap;
-use Xervice\Core\ServiceClass\XerviceInterface;
+use Xervice\Core\Business\Model\Persistence\Reader\AbstractReader;
 
-class UserQueryContainer implements XerviceInterface, UserQueryContainerInterface
+class UserDataReader extends AbstractReader
 {
     /**
      * @return \Orm\Xervice\User\Persistence\UserQuery

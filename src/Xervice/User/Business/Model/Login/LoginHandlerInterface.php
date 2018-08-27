@@ -1,6 +1,6 @@
 <?php
 
-namespace Xervice\User\Business\Login;
+namespace Xervice\User\Business\Model\Login;
 
 use DataProvider\UserAuthDataProvider;
 use DataProvider\UserDataProvider;
@@ -11,9 +11,8 @@ interface LoginHandlerInterface
      * @param \DataProvider\UserAuthDataProvider $authDataProvider
      *
      * @return \DataProvider\UserDataProvider
-     * @throws \Xervice\User\Business\Exception\UserException
      */
-    public function login(UserAuthDataProvider $authDataProvider);
+    public function login(UserAuthDataProvider $authDataProvider): UserDataProvider;
 
     public function logout(): void;
 

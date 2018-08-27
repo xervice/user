@@ -1,40 +1,40 @@
 <?php
 
 
-namespace Xervice\User\Business\Login;
+namespace Xervice\User\Business\Model\Login;
 
 
 use DataProvider\UserAuthDataProvider;
 use DataProvider\UserDataProvider;
-use Xervice\Session\SessionClient;
-use Xervice\User\Business\Authenticator\AuthProviderInterface;
+use Xervice\Session\Business\SessionFacade;
 use Xervice\User\Business\Exception\UserException;
+use Xervice\User\Business\Model\Authenticator\AuthProviderInterface;
 
 class LoginHandler implements LoginHandlerInterface
 {
     private const SESSION_USER_NAME = 'session:user:data';
 
     /**
-     * @var \Xervice\Session\SessionClient
+     * @var \Xervice\Session\Business\SessionFacade
      */
-    private $sessionClient;
+    private $sessionFacade;
 
     /**
-     * @var \Xervice\User\Business\Authenticator\AuthProviderInterface
+     * @var \Xervice\User\Business\Model\Authenticator\AuthProviderInterface
      */
     private $authProvider;
 
     /**
      * LoginHandler constructor.
      *
-     * @param \Xervice\Session\SessionClient $sessionClient
-     * @param \Xervice\User\Business\Authenticator\AuthProviderInterface $authProvider
+     * @param \Xervice\Session\Business\SessionFacade $sessionFacade
+     * @param \Xervice\User\Business\Model\Authenticator\AuthProviderInterface $authProvider
      */
     public function __construct(
-        SessionClient $sessionClient,
+        SessionFacade $sessionFacade,
         AuthProviderInterface $authProvider
     ) {
-        $this->sessionClient = $sessionClient;
+        $this->sessionFacade = $sessionFacade;
         $this->authProvider = $authProvider;
     }
 
@@ -50,7 +50,7 @@ class LoginHandler implements LoginHandlerInterface
             throw new UserException('Login failed');
         }
 
-        $this->sessionClient->set(
+        $this->sessionFacade->set(
             self::SESSION_USER_NAME,
             json_encode(
                 $authDataProvider->getUser()->toArray()
@@ -61,7 +61,7 @@ class LoginHandler implements LoginHandlerInterface
 
     public function logout(): void
     {
-        $this->sessionClient->remove(self::SESSION_USER_NAME);
+        $this->sessionFacade->remove(self::SESSION_USER_NAME);
     }
 
     /**
@@ -70,11 +70,11 @@ class LoginHandler implements LoginHandlerInterface
     public function getUser(): ?UserDataProvider
     {
         $user = null;
-        if ($this->sessionClient->has(self::SESSION_USER_NAME)) {
+        if ($this->sessionFacade->has(self::SESSION_USER_NAME)) {
             $user = new UserDataProvider();
             $user->fromArray(
                 json_decode(
-                    $this->sessionClient->get(self::SESSION_USER_NAME),
+                    $this->sessionFacade->get(self::SESSION_USER_NAME),
                     true
                 )
             );

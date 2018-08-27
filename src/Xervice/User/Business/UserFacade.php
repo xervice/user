@@ -2,19 +2,17 @@
 declare(strict_types=1);
 
 
-namespace Xervice\User;
+namespace Xervice\User\Business;
 
 
 use DataProvider\UserAuthDataProvider;
 use DataProvider\UserCredentialDataProvider;
 use DataProvider\UserDataProvider;
 use DataProvider\UserLoginDataProvider;
-use Xervice\Core\Facade\AbstractFacade;
+use Xervice\Core\Business\Model\Facade\AbstractFacade;
 
 /**
- * @method \Xervice\User\UserFactory getFactory()
- * @method \Xervice\User\UserConfig getConfig()
- * @method \Xervice\User\UserClient getClient()
+ * @method \Xervice\User\Business\UserBusinessFactory getFactory()
  */
 class UserFacade extends AbstractFacade
 {
@@ -104,7 +102,7 @@ class UserFacade extends AbstractFacade
      */
     public function getUserFromId(int $userId): UserDataProvider
     {
-        return $this->getFactory()->getQueryContainer()->getUserFromId($userId);
+        return $this->getFactory()->getReader()->getUserFromId($userId);
     }
 
     /**
@@ -114,7 +112,7 @@ class UserFacade extends AbstractFacade
      */
     public function getUserFromEmail(string $email): UserDataProvider
     {
-        return $this->getFactory()->getQueryContainer()->getUserFromEmail($email);
+        return $this->getFactory()->getReader()->getUserFromEmail($email);
     }
 
     /**
@@ -125,7 +123,7 @@ class UserFacade extends AbstractFacade
      */
     public function getLoginFromUserByType(int $userId, string $type): UserLoginDataProvider
     {
-        return $this->getFactory()->getQueryContainer()->getUserLoginFromType($userId, $type);
+        return $this->getFactory()->getReader()->getUserLoginFromType($userId, $type);
     }
 
     /**

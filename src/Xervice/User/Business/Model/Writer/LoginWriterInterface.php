@@ -1,6 +1,6 @@
 <?php
 
-namespace Xervice\User\Business\Writer;
+namespace Xervice\User\Business\Model\Writer;
 
 use DataProvider\UserLoginDataProvider;
 

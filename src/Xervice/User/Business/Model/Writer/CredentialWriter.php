@@ -1,27 +1,28 @@
 <?php
 
 
-namespace Xervice\User\Business\Writer;
+namespace Xervice\User\Business\Model\Writer;
 
 
 use DataProvider\UserCredentialDataProvider;
+use Xervice\User\Persistence\UserDataReader;
 use Xervice\User\UserQueryContainerInterface;
 
 class CredentialWriter implements CredentialWriterInterface
 {
     /**
-     * @var \Xervice\User\UserQueryContainerInterface
+     * @var \Xervice\User\Persistence\UserDataReader
      */
-    private $queryContainer;
+    private $userDataReader;
 
     /**
      * CredentialWriter constructor.
      *
-     * @param \Xervice\User\UserQueryContainerInterface $queryContainer
+     * @param \Xervice\User\Persistence\UserDataReader $userDataReader
      */
-    public function __construct(UserQueryContainerInterface $queryContainer)
+    public function __construct(UserDataReader $userDataReader)
     {
-        $this->queryContainer = $queryContainer;
+        $this->userDataReader = $userDataReader;
     }
 
     /**
@@ -31,7 +32,7 @@ class CredentialWriter implements CredentialWriterInterface
      */
     public function updateCredential(UserCredentialDataProvider $userCredentialDataProvider): void
     {
-        $credential = $this->queryContainer->getUserCredentialsEntity($userCredentialDataProvider);
+        $credential = $this->userDataReader->getUserCredentialsEntity($userCredentialDataProvider);
         $credential->save();
     }
 
