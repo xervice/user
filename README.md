@@ -28,12 +28,12 @@ class UserDependencyProvider extends XerviceUserDependencyProvider
     /**
      * type => {Login::class}
      *
-     * @return \Xervice\User\Business\Authenticator\Login\LoginInterface[]
+     * @return \Xervice\User\Business\Dependency\Authenticator\Login\LoginInterface[]
      */
     protected function getLoginPluginList(): array
     {
         return [
-            'Default' => new DefaultLogin()
+            'Default' => new \Xervice\User\Business\Model\Authenticator\Login\DefaultLogin()
         ];
     }
 }

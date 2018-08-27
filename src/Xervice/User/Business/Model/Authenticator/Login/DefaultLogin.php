@@ -6,6 +6,7 @@ namespace Xervice\User\Business\Model\Authenticator\Login;
 
 use DataProvider\UserAuthDataProvider;
 use DataProvider\UserCredentialDataProvider;
+use Xervice\User\Business\Dependency\Authenticator\Login\LoginInterface;
 
 class DefaultLogin implements LoginInterface
 {
