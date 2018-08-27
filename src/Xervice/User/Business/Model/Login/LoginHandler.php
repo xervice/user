@@ -44,7 +44,7 @@ class LoginHandler implements LoginHandlerInterface
      * @return \DataProvider\UserDataProvider
      * @throws \Xervice\User\Business\Exception\UserException
      */
-    public function login(UserAuthDataProvider $authDataProvider)
+    public function login(UserAuthDataProvider $authDataProvider): UserDataProvider
     {
         if (!$this->authProvider->auth($authDataProvider)) {
             throw new UserException('Login failed');
